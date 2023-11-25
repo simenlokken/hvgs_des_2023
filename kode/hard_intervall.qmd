@@ -15,7 +15,7 @@ Her ligger all koden fra dataanalysen til den tredje økta, dvs. den harde inter
 
 library(tidyverse)
 library(ggtext)
-library(gridExtra)
+library(patchwork)
 
 theme_set(theme_bw())
 ```
@@ -24,13 +24,22 @@ theme_set(theme_bw())
 
 Dataene er ferdig ryddet for dere, derfor ligger det ikke ved kode som rydder dataene.
 
+#### Last inn data
+
+```{r}
+
+setwd("C:/Users/simen/Desktop/hvgs_des_2023/data")
+
+hard_intervall_kald <- read_csv("hard_intervall_kald.csv")
+```
+
 ### Plott
 
 ```{r}
 
 # Puls som funksjon av tid
 
-p1 <- df_terskel_varm_kald %>%
+p1 <- hard_intervall_kald %>%
   ggplot(aes(x = time, y = heartrate)) +
   geom_line(aes(color = temperature), show.legend = F) +
   scale_x_continuous(
@@ -59,8 +68,8 @@ p1 <- df_terskel_varm_kald %>%
 
 # Watt som funksjon av tid
 
-p2 <- df_terskel_varm_kald |> 
-  filter(watt < 300) |> 
+p2 <- hard_intervall_kald |> 
+  filter(watts < 300) |> 
   ggplot(aes(x = time, y = watts)) +
   geom_line() +
   theme(panel.grid.major.x = element_blank(),
