@@ -1,10 +1,8 @@
 ---
 title: "Rolig langkjøring"
-author: "Simen Lokken"
+author: "Simen Løkken"
 format: html
 editor: visual
-execute: 
-  echo: true
 ---
 
 ### Tema
@@ -26,6 +24,15 @@ theme_set(theme_bw())
 #### Datarydding
 
 Dataene er ferdig ryddet for dere, derfor ligger det ikke ved kode som rydder dataene.
+
+#### Last inn data
+
+```{r}
+
+path <- "C:/Users/simen/Desktop/hvgs_des_2023/data/rolig_langkjoring_kald_varm.csv"
+
+rolig_langkjoring_kald_varm <- read_csv(path)
+```
 
 #### Plott
 
@@ -93,11 +100,15 @@ p2 <- rolig_langkjoring_kald_varm |>
   )
 
 watt_puls_plott_utfyllende <- p1 / p2
+
+watt_puls_plott_utfyllende
 ```
 
 ```{r}
 
 # Lagre plott
+
+setwd("C:/Users/simen/Desktop/hvgs_des_2023/grafer")
 
 ggsave(plot = watt_puls_plott_utfyllende,
        filename = "rolig_langkjoring_utfyllende_plot.jpg",
@@ -169,22 +180,17 @@ p4 <- rolig_langkjoring_kald_varm |>
   )
 
 watt_puls_plott_ikke_utfyllende <- p3 / p4
+
+watt_puls_plott_ikke_utfyllende
 ```
 
 ```{r}
+
+setwd("C:/Users/simen/Desktop/hvgs_des_2023/grafer")
 
 ggsave(plot = watt_puls_plott_ikke_utfyllende,
        filename = "rolig_langkjoring_ikke_utfyllende.jpg",
        dpi = 300,
        height = 4,
        width = 7)
-```
-
-```{r}
-
-p5 <- rolig_langkjoring_varm_kald |> 
-  
-  
-  
-p6 <-   
 ```

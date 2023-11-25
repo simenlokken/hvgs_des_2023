@@ -1,26 +1,12 @@
----
-title: "Examples of Linear and Exponential Functions"
-author: "Simen Lokken"
-format: html
-editor: visual
----
+# TEMA
 
-### Tema
+# Denne fila illustrerer hvordan lineære og eksponentielle funksjoner ser ut
 
-Dette dokumentet illustrerer hvordan lineære og eksponentielle funksjoner ser ut.
-
-#### Last inn pakker
-
-```{r}
+# LAST INN PAKKER
 
 library(tidyverse)
-```
 
-#### Lag eksempeldata, funksjoner og plott
-
-```{r}
-
-# Lineære data
+# FUNKSJONER
 
 x <- 1:10
 df <- tibble(x)
@@ -37,12 +23,11 @@ lin_function <- function(x){
 
 exp_function <- function(x){
   
-  2 *2^x
+  2 * 2^x
   
 }
-```
 
-```{r}
+# PLOTT
 
 # Lineært plott
 
@@ -54,9 +39,6 @@ lin_plot <- df |>
        x = NULL) +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = seq(0, 10, 1))
-```
-
-```{r}
 
 # Eksponentielt plott
 
@@ -68,27 +50,16 @@ exp_plot <- df |>
        x = "x") +
   theme(panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = seq(0, 10, 1))
-```
 
-```{r}
-
-# Slå sammen lineært og eksponentialplott
-
-lin_exp_plot <- gridExtra::grid.arrange(
-  lin_plot,
-  exp_plot,
-  nrow = 2)
-```
-
-```{r}
+lin_plot / exp_plot
 
 # Lagre plott
 
+setwd("C:/Users/simen/Desktop/hvgs_des_2023/grafer")
+
 ggsave(plot = lin_exp_plot, 
        filename = "lin_exp_plot.jpg",
-       path = "C:/Users/simen/Desktop/oxyflow_testlab/oppdrag/hvgs_des_2023/dataanalyse/hvgs/grafer",
        dpi = 300,
        height = 4,
        width = 7
 )
-```
