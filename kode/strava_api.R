@@ -17,7 +17,7 @@ strava_token <- httr::config(token = strava_oauth(app_name,
 # Accessing the data
     
 my_acts <- get_activity_list(strava_token)
-id <- {10209626518}
+id <- {10280897321}
 strava_data <- get_activity_streams(my_acts,
                                         strava_token,
                                         id = id,
