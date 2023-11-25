@@ -1,0 +1,190 @@
+---
+title: "Rolig langkjøring"
+author: "Simen Lokken"
+format: html
+editor: visual
+execute: 
+  echo: true
+---
+
+### Tema
+
+Her ligger koden fra dataanalysen til den første økta, dvs. den rolige langkjøringa til både kald og varm økt.
+
+#### Last inn pakker og velg tema
+
+```{r}
+
+library(tidyverse)
+library(ggtext)
+library(patchwork)
+
+
+theme_set(theme_bw())
+```
+
+#### Datarydding
+
+Dataene er ferdig ryddet for dere, derfor ligger det ikke ved kode som rydder dataene.
+
+#### Plott
+
+Plottene som følger er like, men de har ulik tittel og undertittel. Det første har utfyllende tittel og undertittel, mens det andre har ikke det.
+
+```{r}
+
+# Puls som funksjon av tid
+
+p1 <- rolig_langkjoring_kald_varm |> 
+  filter(heartrate > 95) |> 
+  ggplot(aes(x = time, y = heartrate)) +
+  geom_line(aes(color = temperature), show.legend = FALSE, alpha = 0.9) +
+  scale_x_continuous(
+    name = NULL,
+    breaks = seq(0, 3500, 1000)
+  ) +
+  scale_y_continuous(
+    name = "Puls (slag/min)",
+    breaks = seq(100, 150, 10)
+  ) +
+  scale_color_manual(values = c("#3caae6", "#ed4e4e")) +
+  labs(
+    title = "Hvordan påvirkes pulsen av ytre forhold som temperatur?",
+    subtitle = paste(
+    "Under", "<span style='color:#ed4e4e'>varme forhold</span>", 
+    "drifter pulsen mer enn under", 
+    "<span style='color:#3caae6'>kalde forhold</span>"
+    )
+  ) +
+  theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    plot.title = element_text(size = 10),
+    plot.subtitle = element_markdown(size = 8),
+    axis.title = element_text(size = 10),
+    axis.title.x = element_text(size = 8),
+    axis.title.y = element_text(size = 8)
+  )
+
+# Watt som funksjon av tid
+
+p2 <- rolig_langkjoring_kald_varm |> 
+  filter(temperature == "kald") |> 
+  filter(watts > 130 & watts < 170) |> 
+  ggplot(aes(x = time, y = watts)) +
+  geom_line() +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank()
+  ) +
+  scale_x_continuous(name = "Tid (sekunder)") +
+  scale_y_continuous(name = "Watt (W)",
+                     breaks = seq(130, 180, 10)
+                     ) +
+  labs(title = "Hvordan vet vi at pulsen drifter som et resultat av fysiologi?",
+       subtitle = "Vi ser at watt (W) holdes stabil gjennom hele økta, så vi kan konkludere med at pulsøkningen er fysiologisk og ikke fysisk"
+  ) +
+  theme(
+    plot.title = element_text(size = 10),
+    plot.subtitle = element_text(size = 8),
+    axis.title.x = element_text(size = 8),
+    axis.title.y = element_text(size = 8)
+  )
+
+watt_puls_plott_utfyllende <- p1 / p2
+```
+
+```{r}
+
+# Lagre plott
+
+ggsave(plot = watt_puls_plott_utfyllende,
+       filename = "rolig_langkjoring_utfyllende_plot.jpg",
+       dpi = 300,
+       height = 4,
+       width = 7
+)
+```
+
+Under her er det samme plottet, men det har ikke utfyllende tittel og undertittel.
+
+```{r}
+
+# Puls for varm og kald økt som en funksjon av tid
+
+p3 <- rolig_langkjoring_kald_varm %>%
+  filter(heartrate > 95) %>%
+  ggplot(aes(x = time, y = heartrate)) +
+  geom_line(aes(color = temperature), show.legend = FALSE) +
+  scale_x_continuous(
+    name = NULL,
+    breaks = seq(0, 3500, 1000)
+  ) +
+  scale_y_continuous(
+    name = "Puls (slag/min)",
+    breaks = seq(100, 150, 10)
+  ) +
+  scale_color_manual(values = c("#3caae6", "#ed4e4e")) +
+  labs(
+    title = "Puls som en funksjon av tid",
+    subtitle = paste(
+      "<span style='color:#ed4e4e'>Varme forhold</span>", 
+    "og", 
+    "<span style='color:#3caae6'>kalde forhold</span>"
+    )
+  ) +
+  theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    plot.title = element_text(size = 10),
+    plot.subtitle = element_markdown(size = 8),
+    axis.title = element_text(size = 10),
+    axis.title.x = element_text(size = 8),
+    axis.title.y = element_text(size = 8)
+  )
+  
+# Watt som en funksjon av tid
+
+p4 <- rolig_langkjoring_kald_varm |> 
+  filter(temperature == "kald") |> 
+  filter(watts > 130 & watts < 170) |> 
+  ggplot(aes(x = time, y = watts)) +
+  geom_line() +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank()
+  ) +
+  scale_x_continuous(name = "Tid (sekunder)") +
+  scale_y_continuous(name = "Watt (W)",
+                     breaks = seq(130, 180, 10)
+                     ) +
+  labs(title = "Watt som en funksjon av tid") +
+  theme(
+    plot.title = element_text(size = 10),
+    plot.subtitle = element_text(size = 8),
+    axis.title.x = element_text(size = 8),
+    axis.title.y = element_text(size = 8)
+  )
+
+watt_puls_plott_ikke_utfyllende <- p3 / p4
+```
+
+```{r}
+
+ggsave(plot = watt_puls_plott_ikke_utfyllende,
+       filename = "rolig_langkjoring_ikke_utfyllende.jpg",
+       dpi = 300,
+       height = 4,
+       width = 7)
+```
+
+```{r}
+
+p5 <- rolig_langkjoring_varm_kald |> 
+  
+  
+  
+p6 <-   
+```

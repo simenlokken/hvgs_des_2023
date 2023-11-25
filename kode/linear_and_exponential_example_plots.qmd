@@ -1,0 +1,94 @@
+---
+title: "Examples of Linear and Exponential Functions"
+author: "Simen Lokken"
+format: html
+editor: visual
+---
+
+### Tema
+
+Dette dokumentet illustrerer hvordan lineære og eksponentielle funksjoner ser ut.
+
+#### Last inn pakker
+
+```{r}
+
+library(tidyverse)
+```
+
+#### Lag eksempeldata, funksjoner og plott
+
+```{r}
+
+# Lineære data
+
+x <- 1:10
+df <- tibble(x)
+
+# Lineær funksjon
+
+lin_function <- function(x){
+  
+  10 + 2*x
+  
+}
+
+# Eksponentiell funksjon
+
+exp_function <- function(x){
+  
+  2 *2^x
+  
+}
+```
+
+```{r}
+
+# Lineært plott
+
+lin_plot <- df |> 
+  ggplot(aes(x = x)) +
+  stat_function(fun = lin_function) +
+  theme_light() +
+  labs(title = "Lineær funksjon",
+       x = NULL) +
+  theme(panel.grid.minor = element_blank()) +
+  scale_x_continuous(breaks = seq(0, 10, 1))
+```
+
+```{r}
+
+# Eksponentielt plott
+
+exp_plot <- df |> 
+  ggplot(aes(x = x)) +
+  stat_function(fun = exp_function) +
+  theme_light() +
+  labs(title = "Eksponentialfunksjon",
+       x = "x") +
+  theme(panel.grid.minor = element_blank()) +
+  scale_x_continuous(breaks = seq(0, 10, 1))
+```
+
+```{r}
+
+# Slå sammen lineært og eksponentialplott
+
+lin_exp_plot <- gridExtra::grid.arrange(
+  lin_plot,
+  exp_plot,
+  nrow = 2)
+```
+
+```{r}
+
+# Lagre plott
+
+ggsave(plot = lin_exp_plot, 
+       filename = "lin_exp_plot.jpg",
+       path = "C:/Users/simen/Desktop/oxyflow_testlab/oppdrag/hvgs_des_2023/dataanalyse/hvgs/grafer",
+       dpi = 300,
+       height = 4,
+       width = 7
+)
+```

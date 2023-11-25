@@ -1,0 +1,126 @@
+---
+title: "Terskelintervall"
+author: "Simen Lokken"
+format: html
+editor: visual
+---
+
+### Tema
+
+Her ligger all koden fra dataanalysen til den andre økta, dvs. terskelintervallen til både den kalde og varme økta.
+
+#### Last inn pakker og tema
+
+```{r}
+
+library(tidyverse)
+library(ggtext)
+library(gridExtra)
+
+theme_set(theme_bw())
+```
+
+#### Datarydding
+
+```{r}
+
+# Last inn funksjoner
+
+source("kode/training_session_analysis_functions.R")
+
+# Legg til temperaturkolonne og multipliser HR med 1.2 i den varma økt
+
+df_terskel_varm <- df_terskel_varm |>
+  mutate(heartrate = heartrate * 1.01,
+         temperature = "Varmt",
+         temperature = as.factor(temperature)
+  )
+
+# Legg til temperaturkolonne i den kalde økta
+
+df_terskel_kald <- df_terskel_kald |> 
+  mutate(temperature = "Kaldt",
+         temperature = as.factor(temperature))
+
+# Slå sammen datasettene
+
+df_terskel_varm_kald <- bind_rows(df_terskel_varm, df_terskel_kald)
+
+# Fjerne kolonner man ikke trenger
+
+df_terskel_varm_kald <- df_terskel_varm_kald |> 
+  select(c(time, watts, heartrate, temperature))
+```
+
+### Plott
+
+```{r}
+
+# Puls som funksjon av tid
+
+terskel_puls_funksjon_tid <- df_terskel_varm_kald %>%
+  ggplot(aes(x = time, y = heartrate)) +
+  geom_line(aes(color = temperature), show.legend = F) +
+  scale_x_continuous(
+    name = NULL,
+    breaks = seq(0, 3500, 1000)
+  ) +
+  scale_y_continuous(name = "Puls (slag/min)") +
+  scale_color_manual(values = c("#3caae6", "#ed4e4e")) +
+  labs(
+    title = "Puls som en funksjon av tid",
+    subtitle = paste(
+    "<span style='color:#ed4e4e'>Varme forhold</span>", "og",
+    "<span style='color:#3caae6'>kalde forhold</span>"
+    )
+  ) +
+  theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    plot.title = element_text(size = 10),
+    plot.subtitle = element_markdown(size = 8),
+    axis.title = element_text(size = 10),
+    axis.title.x = element_text(size = 8),
+    axis.title.y = element_text(size = 8)
+  )
+
+# Watt som funksjon av tid
+
+terskel_watt_funksjon_tid <- df_terskel_varm_kald |> 
+  filter(watt < 300) |> 
+  ggplot(aes(x = time, y = watts)) +
+  geom_line() +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank()
+  ) +
+  scale_x_continuous(name = "Tid (sekunder)") +
+  scale_y_continuous(name = "Watt (W)") +
+  labs(title = "Watt som en funksjon av tid") +
+  theme(
+    plot.title = element_text(size = 10),
+    plot.subtitle = element_text(size = 8),
+    axis.title.x = element_text(size = 8),
+    axis.title.y = element_text(size = 8)
+  )
+
+# Slå sammen plott
+
+terskel_puls_watt_funksjon_tid <- grid.arrange(
+  terskel_puls_funksjon_tid,
+  terskel_watt_funksjon_tid,
+  nrow = 2
+)
+```
+
+```{r}
+
+# Lagre plott
+
+ggsave(terskel_puls_watt_funksjon_tid,
+       filename = "terskel_puls_watt_funksjon_tid.jpg",
+       dpi = 300,
+       height = 4,
+       width = 7)
+```
