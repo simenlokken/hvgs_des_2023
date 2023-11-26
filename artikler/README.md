@@ -8,4 +8,4 @@ Spesielt vil jeg anbefale dere å lese fra:
 
   - Bassett, 2000. Denne diskuterer hvilke faktorer som begrenser maksimalt oksygenopptak og utholdenhetsprestasjon. 
   - Seiler & Tønnessen, 2009. Denne diskuterer flere typer intensitet (rolig, moderat, hardt) og effekt av varighet på trening. 
-  - Maclnnis & Gibala, 2017. Denne diskuterer fysiologiske tilpasninger som tar sted under ulik typer trening. 
+  - Maclnnis & Gibala, 2017. Denne diskuterer fysiologiske tilpasninger som tar sted under ulik intensitet.
