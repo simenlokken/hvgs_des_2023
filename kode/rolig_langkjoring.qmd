@@ -9,7 +9,16 @@ editor: visual
 
 Her ligger koden fra dataanalysen til den første økta, dvs. den rolige langkjøringa til både kald og varm økt.
 
-#### Last inn pakker og velg tema
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+#### **Last inn pakker og velg tema**
 
 ```{r}
 
@@ -21,7 +30,7 @@ library(patchwork)
 theme_set(theme_bw())
 ```
 
-#### Last inn data
+#### **Last inn data**
 
 ```{r}
 
@@ -34,7 +43,7 @@ rolig_langkjoring_kald_varm <- read_csv("rolig_langkjoring_kald_varm.csv")
 
 Disse dataene er ferdig rydda for dere.
 
-#### Plott
+#### **Plott**
 
 Plottene som følger er like, men de har ulik tittel og undertittel. Det første har utfyllende tittel og undertittel, mens det andre har ikke det.
 
@@ -52,7 +61,7 @@ p1 <- rolig_langkjoring_kald_varm |>
   ) +
   scale_y_continuous(
     name = "Puls (slag/min)",
-    breaks = seq(100, 150, 10)
+    breaks = seq(100, 150, 20)
   ) +
   scale_color_manual(values = c("#3caae6", "#ed4e4e")) +
   labs(

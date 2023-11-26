@@ -9,7 +9,16 @@ editor: visual
 
 Her ligger all koden fra dataanalysen til den tredje økta, dvs. den harde intervallen både kaldt og varmt.
 
-#### Last inn pakker og tema
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+#### **Last inn pakker og tema**
 
 ```{r}
 
@@ -20,7 +29,7 @@ library(patchwork)
 theme_set(theme_bw())
 ```
 
-#### Last inn data
+#### **Last inn data**
 
 ```{r}
 
@@ -29,7 +38,7 @@ setwd("C:/Users/simen/Desktop/hvgs_des_2023/data")
 hard_intervall_kald <- read_csv("hard_intervall_kald.csv")
 ```
 
-#### Datarydding
+#### **Datarydding**
 
 Disse dataene må ryddes. Vi må legge til en kolonne i datasettet som indikerer hvilket intervalldrag det er fra for å kunne lage fiolinplottet.
 
@@ -81,7 +90,7 @@ write_csv(x = hard_intervall_kald, file = "hard_intervall_kald.csv")
 write_csv(x = hard_intervall_kald_varm, file = "hard_intervall_kald_varm.csv")
 ```
 
-#### Plott
+#### **Plott**
 
 Puls og watt som en funksjon av tid
 
@@ -139,6 +148,8 @@ p2 <- hard_intervall_kald_varm |>
 # Slå sammen plott
 
 terskel_puls_watt_funksjon_tid <- p1 / p2
+
+p1 / p2
 ```
 
 ```{r}
@@ -210,6 +221,8 @@ p4 <- hard_intervall_kald_varm |>
   )
 
 hard_intervall_watt_puls_fordeling <- p3 / p4
+
+p3 / p4
 ```
 
 ```{r}
@@ -286,6 +299,8 @@ p6 <- hard_intervall_kald_varm |>
   )
 
 hard_intervall_watt_puls_fordeling_split <- p5 / p6
+
+p5 / p6
 ```
 
 ```{r}
