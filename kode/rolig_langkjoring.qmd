@@ -21,18 +21,18 @@ library(patchwork)
 theme_set(theme_bw())
 ```
 
-#### Datarydding
-
-Dataene er ferdig ryddet for dere, derfor ligger det ikke ved kode som rydder dataene.
-
 #### Last inn data
 
 ```{r}
 
-path <- "C:/Users/simen/Desktop/hvgs_des_2023/data/rolig_langkjoring_kald_varm.csv"
+setwd("C:/Users/simen/Desktop/hvgs_des_2023/data")
 
-rolig_langkjoring_kald_varm <- read_csv(path)
+rolig_langkjoring_kald_varm <- read_csv("rolig_langkjoring_kald_varm.csv")
 ```
+
+#### Datarydding
+
+Disse dataene er ferdig rydda for dere.
 
 #### Plott
 
