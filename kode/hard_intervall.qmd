@@ -154,11 +154,36 @@ ggsave(terskel_puls_watt_funksjon_tid,
        width = 7)
 ```
 
-Watt- og pulsfordeling for hvert intervalldrag
+Watt- og pulsfordeling for hvert intervalldrag med både vanlig og split-fiolinplott
 
 ```{r}
 
 p3 <- hard_intervall_kald_varm |> 
+  drop_na() |> 
+  ggplot(aes(interval, heartrate, fill = temperature)) +
+  geom_violin(alpha = 0.9, width = 0.7, show.legend = F) +
+  scale_fill_manual(values = c("#3caae6", "#ed4e4e")) +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank()
+  ) +
+  scale_x_discrete(name = "Intervalldrag") +
+  scale_y_continuous(
+    name = "Puls (slag/min)",
+    breaks = seq(135, 190, 15)) + #ed4e4e
+  labs(
+    title = "Pulsfordeling for hvert intervalldrag",
+    subtitle = paste("<span style='color:#3caae6'>Kald økt</span>", "og",
+    "<span style='color:#ed4e4e'>varm økt</span>")
+    ) +
+  theme(
+    plot.title = element_text(size = 10),
+    plot.subtitle = element_markdown(size = 8),
+    axis.title.x = element_text(size = 8),
+    axis.title.y = element_text(size = 8)
+  )
+
+p4 <- hard_intervall_kald_varm |> 
   drop_na() |> 
   filter(watts > 200 & watts < 225) |>  
   ggplot(aes(interval, watts, fill = temperature)) +
@@ -184,16 +209,38 @@ p3 <- hard_intervall_kald_varm |>
     axis.title.y = element_text(size = 8)
   )
 
-p4 <- hard_intervall_kald_varm |> 
+hard_intervall_watt_puls_fordeling <- p3 / p4
+```
+
+```{r}
+
+# Lagre plott
+
+setwd("C:/Users/simen/Desktop/hvgs_des_2023/grafer")
+
+ggsave(hard_intervall_watt_puls_fordeling,
+       filename = "hard_intervall_watt_puls_fordeling.jpg",
+       dpi = 300,
+       height = 5,
+       width = 6)
+```
+
+```{r}
+
+library(introdataviz)
+
+# Puls
+
+p5 <- hard_intervall_kald_varm |> 
   drop_na() |> 
   ggplot(aes(interval, heartrate, fill = temperature)) +
-  geom_violin(alpha = 0.9, width = 0.7, show.legend = F) +
-  scale_fill_manual(values = c("#3caae6", "#ed4e4e")) +
+  geom_split_violin(alpha = 0.8, show.legend = F) +
+   scale_fill_manual(values = c("#3caae6", "#ed4e4e")) +
   theme(panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank(),
         panel.grid.minor.y = element_blank()
   ) +
-  scale_x_discrete(name = "Intervalldrag") +
+  scale_x_discrete(name = NULL) +
   scale_y_continuous(
     name = "Puls (slag/min)",
     breaks = seq(135, 190, 15)) + #ed4e4e
@@ -208,9 +255,37 @@ p4 <- hard_intervall_kald_varm |>
     axis.title.x = element_text(size = 8),
     axis.title.y = element_text(size = 8)
   )
-  
 
-hard_intervall_watt_puls_fordeling <- p3 / p4
+# Watt
+
+p6 <- hard_intervall_kald_varm |> 
+  drop_na() |> 
+  filter(watts > 200 & watts < 225) |>  
+  ggplot(aes(interval, watts, fill = temperature)) +
+  geom_split_violin(alpha = 0.8, show.legend = F) +
+
+  scale_fill_manual(values = c("#3caae6", "#ed4e4e")) +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank()
+  ) +
+  scale_x_discrete(name = "Intervalldrag") +
+  scale_y_continuous(
+    name = "Watt (W)",
+    breaks = seq(205, 220, 5)) +
+  labs(
+    title = "Wattfordeling for hvert intervalldrag",
+    subtitle = paste("<span style='color:#3caae6'>Kald økt</span>", "og",
+    "<span style='color:#ed4e4e'>varm økt</span>")
+    ) +
+  theme(
+    plot.title = element_text(size = 10),
+    plot.subtitle = element_markdown(size = 8),
+    axis.title.x = element_text(size = 8),
+    axis.title.y = element_text(size = 8)
+  )
+
+hard_intervall_watt_puls_fordeling_split <- p5 / p6
 ```
 
 ```{r}
@@ -219,9 +294,9 @@ hard_intervall_watt_puls_fordeling <- p3 / p4
 
 setwd("C:/Users/simen/Desktop/hvgs_des_2023/grafer")
 
-ggsave(hard_intervall_watt_puls_fordeling,
-       filename = "hard_intervall_watt_puls_fordeling.jpg",
+ggsave(hard_intervall_watt_puls_fordeling_split,
+       filename = "hard_intervall_watt_puls_fordeling_split.jpg",
        dpi = 300,
-       height = 4,
-       width = 7)
+       height = 5,
+       width = 6)
 ```
