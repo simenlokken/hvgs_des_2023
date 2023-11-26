@@ -95,8 +95,10 @@ terskel_puls_watt_funksjon_tid <- p1 / p2
 
 # Lagre plott
 
+setwd("C:/Users/simen/Desktop/hvgs_des_2023/grafer")
+
 ggsave(terskel_puls_watt_funksjon_tid,
-       filename = "terskel_puls_watt_funksjon_tid.jpg",
+       filename = "hard_intervall_puls_watt_funksjon_tid.jpg",
        dpi = 300,
        height = 4,
        width = 7)
