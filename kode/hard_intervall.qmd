@@ -29,18 +29,9 @@ library(patchwork)
 theme_set(theme_bw())
 ```
 
-#### **Last inn data**
-
-```{r}
-
-setwd("C:/Users/simen/Desktop/hvgs_des_2023/data")
-
-hard_intervall_kald <- read_csv("hard_intervall_kald.csv")
-```
-
 #### **Datarydding**
 
-Disse dataene må ryddes. Vi må legge til en kolonne i datasettet som indikerer hvilket intervalldrag det er fra for å kunne lage fiolinplottet.
+Disse dataene er ryddet for dere.
 
 ```{r}
 
@@ -48,36 +39,34 @@ Disse dataene må ryddes. Vi må legge til en kolonne i datasettet som indikerer
 
 hard_intervall_kald <- hard_intervall_kald %>%
   mutate(
-    interval = case_when(
+    interval = as.factor(case_when(
+      time < (13.40 * 60) ~ 0,
       time > (13.40 * 60) & time < (18.40 * 60) ~ 1,
       time > (21.10 * 60) & time < (26.10 * 60) ~ 2,
       time > (28.10 * 60) & time < (33.10 * 60) ~ 3,
-      time > (35.10 * 60) & time < (40.10 * 60) ~ 4
+      time > (35.10 * 60) & time < (40.10 * 60) ~ 4)
     )
   ) |> 
-  mutate(interval = as.factor(interval))
+  select(time, heartrate, watts, temperature, interval)
 
 # Varm økt
 
-# hard_intervall_varm <- hard_intervall_varm %>%
-#   mutate(
-#     interval = case_when(
-#       time > (13.40 * 60) & time < (18.40 * 60) ~ 1,
-#       time > (21.10 * 60) & time < (26.10 * 60) ~ 2,
-#       time > (28.10 * 60) & time < (33.10 * 60) ~ 3,
-#       time > (35.10 * 60) & time < (40.10 * 60) ~ 4
-#     )
-#   ) |> 
-#   mutate(interval = as.factor(interval))
-
-hard_intervall_varm <- hard_intervall_kald |> 
-  select(-temperature) |> 
+hard_intervall_varm <- hard_intervall_varm |> 
   mutate(
     temperature = "varm",
-    heartrate = heartrate * 1.07
-  )
+    interval = as.factor(case_when(
+      time < (15.5 * 60) ~ 0,
+      time > (15.5 * 60) & time < (20.5 * 60) ~ 1,
+      time > (22 * 60) & time < (27 * 60) ~ 2,
+      time > (28.5 * 60) & time < (33.5 * 60) ~ 3,
+      time > (35 * 60) & time < (40 * 60) ~ 4,
+      time > (41.5 * 60) & time < (46.5 * 60) ~ 5,
+      time > (48 * 60) & time < (53 * 60) ~ 6)
+    )
+  ) |> 
+  select(time, heartrate, watts, temperature, interval)
 
-# Slå sammen begge datasettene
+# Slå sammen
 
 hard_intervall_kald_varm <- rbind(hard_intervall_kald, hard_intervall_varm)
 
@@ -92,28 +81,15 @@ write_csv(x = hard_intervall_kald_varm, file = "hard_intervall_kald_varm.csv")
 
 #### **Plott**
 
-Puls og watt som en funksjon av tid
-
 ```{r}
 
 # Puls som funksjon av tid
 
-p1 <- hard_intervall_kald_varm %>%
+p1 <- hard_intervall_kald %>%
   ggplot(aes(x = time, y = heartrate)) +
-  geom_line(aes(color = temperature), show.legend = F) +
-  scale_x_continuous(
-    name = NULL,
-    breaks = seq(0, 3500, 1000)
-  ) +
+  geom_line(color = "dodgerblue", alpha = 0.8) +
+  scale_x_continuous(name = NULL) + 
   scale_y_continuous(name = "Puls (slag/min)") +
-  scale_color_manual(values = c("#3caae6", "#ed4e4e")) +
-  labs(
-    title = "Puls som en funksjon av tid",
-    subtitle = paste(
-    "<span style='color:#ed4e4e'>Varme forhold</span>", "og",
-    "<span style='color:#3caae6'>kalde forhold</span>"
-    )
-  ) +
   theme(
     panel.grid.major.x = element_blank(),
     panel.grid.minor.x = element_blank(),
@@ -125,31 +101,25 @@ p1 <- hard_intervall_kald_varm %>%
     axis.title.y = element_text(size = 8)
   )
 
-# Watt som funksjon av tid
-
-p2 <- hard_intervall_kald_varm |> 
-  filter(watts < 300) |> 
-  ggplot(aes(x = time, y = watts)) +
-  geom_line() +
-  theme(panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
-        panel.grid.minor.y = element_blank()
-  ) +
+p2 <- hard_intervall_varm |> 
+  ggplot(aes(x = time, y = heartrate)) +
+  geom_line(color = "red", alpha = 0.8) +
   scale_x_continuous(name = "Tid (sekunder)") +
-  scale_y_continuous(name = "Watt (W)") +
-  labs(title = "Watt som en funksjon av tid") +
-  theme(
+  scale_y_continuous(name = "Puls (slag/min)") +
+   theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
     plot.title = element_text(size = 10),
-    plot.subtitle = element_text(size = 8),
+    plot.subtitle = element_markdown(size = 8),
+    axis.title = element_text(size = 10),
     axis.title.x = element_text(size = 8),
     axis.title.y = element_text(size = 8)
   )
 
-# Slå sammen plott
+intervall_sammenligning_terskel_hard <- p1 / p2
 
-terskel_puls_watt_funksjon_tid <- p1 / p2
-
-p1 / p2
+intervall_sammenligning_terskel_hard
 ```
 
 ```{r}
@@ -158,72 +128,14 @@ p1 / p2
 
 setwd("C:/Users/simen/Desktop/hvgs_des_2023/grafer")
 
-ggsave(terskel_puls_watt_funksjon_tid,
-       filename = "hard_intervall_puls_watt_funksjon_tid.jpg",
+ggsave(intervall_sammenligning_terskel_hard,
+       filename = "intervall_sammenligning_terskel_hard.jpg",
        dpi = 300,
        height = 4,
        width = 7)
 ```
 
 Watt- og pulsfordeling for hvert intervalldrag med både vanlig og split-fiolinplott
-
-```{r}
-
-p3 <- hard_intervall_kald_varm |> 
-  drop_na() |> 
-  ggplot(aes(interval, heartrate, fill = temperature)) +
-  geom_violin(alpha = 0.9, width = 0.7, show.legend = F) +
-  scale_fill_manual(values = c("#3caae6", "#ed4e4e")) +
-  theme(panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
-        panel.grid.minor.y = element_blank()
-  ) +
-  scale_x_discrete(name = NULL) +
-  scale_y_continuous(
-    name = "Puls (slag/min)",
-    breaks = seq(135, 190, 15)) + #ed4e4e
-  labs(
-    title = "Pulsfordeling for hvert intervalldrag",
-    subtitle = paste("<span style='color:#3caae6'>Kald økt</span>", "og",
-    "<span style='color:#ed4e4e'>varm økt</span>")
-    ) +
-  theme(
-    plot.title = element_text(size = 10),
-    plot.subtitle = element_markdown(size = 8),
-    axis.title.x = element_text(size = 8),
-    axis.title.y = element_text(size = 8)
-  )
-
-p4 <- hard_intervall_kald_varm |> 
-  drop_na() |> 
-  filter(watts > 200 & watts < 225) |>  
-  ggplot(aes(interval, watts, fill = temperature)) +
-  geom_violin(alpha = 0.9, width = 0.8, show.legend = F) +
-  scale_fill_manual(values = c("#3caae6", "#ed4e4e")) +
-  theme(panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
-        panel.grid.minor.y = element_blank()
-  ) +
-  scale_x_discrete(name = "Intervalldrag") +
-  scale_y_continuous(
-    name = "Watt (W)",
-    breaks = seq(205, 220, 5)) +
-  labs(
-    title = "Wattfordeling for hvert intervalldrag",
-    subtitle = paste("<span style='color:#3caae6'>Kald økt</span>", "og",
-    "<span style='color:#ed4e4e'>varm økt</span>")
-    ) +
-  theme(
-    plot.title = element_text(size = 10),
-    plot.subtitle = element_markdown(size = 8),
-    axis.title.x = element_text(size = 8),
-    axis.title.y = element_text(size = 8)
-  )
-
-hard_intervall_watt_puls_fordeling <- p3 / p4
-
-p3 / p4
-```
 
 ```{r}
 
@@ -245,18 +157,16 @@ library(introdataviz)
 # Puls
 
 p5 <- hard_intervall_kald_varm |> 
+  filter(interval != 6 & interval != 5 & interval != 0) |> 
   drop_na() |> 
   ggplot(aes(interval, heartrate, fill = temperature)) +
   geom_split_violin(alpha = 0.8, show.legend = F) +
-   scale_fill_manual(values = c("#3caae6", "#ed4e4e")) +
   theme(panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank(),
         panel.grid.minor.y = element_blank()
   ) +
   scale_x_discrete(name = NULL) +
-  scale_y_continuous(
-    name = "Puls (slag/min)",
-    breaks = seq(135, 190, 15)) + #ed4e4e
+  scale_y_continuous(name = "Puls (slag/min)") +
   labs(
     title = "Pulsfordeling for hvert intervalldrag",
     subtitle = paste("<span style='color:#3caae6'>Kald økt</span>", "og",
@@ -267,40 +177,12 @@ p5 <- hard_intervall_kald_varm |>
     plot.subtitle = element_markdown(size = 8),
     axis.title.x = element_text(size = 8),
     axis.title.y = element_text(size = 8)
-  )
-
-# Watt
-
-p6 <- hard_intervall_kald_varm |> 
-  drop_na() |> 
-  filter(watts > 200 & watts < 225) |>  
-  ggplot(aes(interval, watts, fill = temperature)) +
-  geom_split_violin(alpha = 0.8, show.legend = F) +
-
-  scale_fill_manual(values = c("#3caae6", "#ed4e4e")) +
-  theme(panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
-        panel.grid.minor.y = element_blank()
   ) +
-  scale_x_discrete(name = "Intervalldrag") +
-  scale_y_continuous(
-    name = "Watt (W)",
-    breaks = seq(205, 220, 5)) +
-  labs(
-    title = "Wattfordeling for hvert intervalldrag",
-    subtitle = paste("<span style='color:#3caae6'>Kald økt</span>", "og",
-    "<span style='color:#ed4e4e'>varm økt</span>")
-    ) +
-  theme(
-    plot.title = element_text(size = 10),
-    plot.subtitle = element_markdown(size = 8),
-    axis.title.x = element_text(size = 8),
-    axis.title.y = element_text(size = 8)
-  )
+  scale_fill_brewer(palette = "Set1")
 
-hard_intervall_watt_puls_fordeling_split <- p5 / p6
+fiolin_plott <- p5
 
-p5 / p6
+p5
 ```
 
 ```{r}

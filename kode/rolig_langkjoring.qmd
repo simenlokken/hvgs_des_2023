@@ -61,7 +61,7 @@ p1 <- rolig_langkjoring_kald_varm |>
   ) +
   scale_y_continuous(
     name = "Puls (slag/min)",
-    breaks = seq(100, 150, 20)
+    breaks = seq(100, 160, 20)
   ) +
   scale_color_manual(values = c("#3caae6", "#ed4e4e")) +
   labs(
@@ -86,7 +86,7 @@ p1 <- rolig_langkjoring_kald_varm |>
 # Watt som funksjon av tid
 
 p2 <- rolig_langkjoring_kald_varm |> 
-  filter(temperature == "kald") |> 
+  filter(temperature == "varm") |> 
   filter(watts > 130 & watts < 170) |> 
   ggplot(aes(x = time, y = watts)) +
   geom_line() +
@@ -168,7 +168,7 @@ p3 <- rolig_langkjoring_kald_varm %>%
 # Watt som en funksjon av tid
 
 p4 <- rolig_langkjoring_kald_varm |> 
-  filter(temperature == "kald") |> 
+  filter(temperature == "varm") |> 
   filter(watts > 130 & watts < 170) |> 
   ggplot(aes(x = time, y = watts)) +
   geom_line() +
@@ -199,6 +199,47 @@ setwd("C:/Users/simen/Desktop/hvgs_des_2023/grafer")
 
 ggsave(plot = watt_puls_plott_ikke_utfyllende,
        filename = "rolig_langkjoring_ikke_utfyllende.jpg",
+       dpi = 300,
+       height = 4,
+       width = 7)
+```
+
+Fiolinplott
+
+```{r}
+
+library(introdataviz)
+
+rolig_fiolin_puls <- rolig_langkjoring_kald_varm |> 
+  ggplot(aes(x = temperature, y = heartrate, fill = temperature)) +
+  geom_violin(alpha = 0.8, show.legend = F) +
+  scale_x_discrete(
+    name = "Temperatur",
+    labels = c("Kald", "Varm")
+    ) +
+  scale_y_continuous(name = "Puls (slag/min)") +
+  scale_fill_manual(values = c("#3caae6", "#ed4e4e")) +
+   theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    plot.title = element_text(size = 10),
+    plot.subtitle = element_markdown(size = 8),
+    axis.title = element_text(size = 10),
+    axis.title.x = element_text(size = 8),
+    axis.title.y = element_text(size = 8)
+  ) +
+  labs(title = "Pulsfordeling på den rolige langkjøringa")
+```
+
+```{r}
+
+# Lagre plott
+
+setwd("C:/Users/simen/Desktop/hvgs_des_2023/grafer")
+
+ggsave(plot = rolig_fiolin_puls,
+       filename = "rolig_fiolin_puls.jpg",
        dpi = 300,
        height = 4,
        width = 7)
