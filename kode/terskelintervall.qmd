@@ -34,14 +34,7 @@ terskelintervall_kald_varm <- read_csv("terskelintervall_kald_varm.csv")
 
 #### Rydd data
 
-Disse dataene er ryddet for dere, men vi filtrerer ut de kolonnene vi er interessert i og gjør intervalkolonna til en kategorisk variablel (for å kunne plotte et fiolinplott).
-
-```{r}
-
-terskelintervall_kald_varm <- terskelintervall_kald_varm |> 
-  select(time, heartrate, watts, interval, temperature) |> 
-  mutate(interval = as.factor(interval))
-```
+Disse dataene er ryddet for dere.
 
 #### Plott
 
@@ -50,6 +43,11 @@ Fiolinplott for pulsfordeling for hvert intervalldrag, kald og varm økt.
 ```{r}
 
 library(introdataviz)
+
+# Interval må være en kategorisk variabel før plotting
+
+terskelintervall_kald_varm <- terskelintervall_kald_varm |> 
+  mutate(interval = as.factor(interval))
 
 # Puls
 
@@ -91,38 +89,6 @@ ggsave(plot = p3,
        height = 4,
        width = 7
 )
-```
-
-Fiolinplott filtrert etter to minutter ut i dragene.
-
-```{r}
-
-p3 <- terskelintervall_kald_varm |> 
-  filter()
-  drop_na() |> 
-  ggplot(aes(interval, heartrate, fill = temperature)) +
-  geom_split_violin(alpha = 0.8, show.legend = F) +
-  theme(panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
-        panel.grid.minor.y = element_blank()
-  ) +
-  scale_x_discrete(name = NULL) +
-  scale_y_continuous(name = "Puls (slag/min)") +
-  labs(
-    title = "Pulsfordeling for hvert intervalldrag",
-    subtitle = paste("<span style='color:#3caae6'>Kald økt</span>", "og",
-    "<span style='color:#ed4e4e'>varm økt</span>")
-    ) +
-  theme(
-    plot.title = element_text(size = 10),
-    plot.subtitle = element_markdown(size = 8),
-    axis.title.x = element_text(size = 8),
-    axis.title.y = element_text(size = 8)
-  ) +
- scale_fill_manual(values = c("#3caae6", "#ed4e4e"))
-
-p3
-
 ```
 
 ```{r}
@@ -175,6 +141,8 @@ p6 <- terskelintervall_kald_varm |>
  scale_fill_manual(values = c("#3caae6", "#ed4e4e"))
 
 terskel_puls_watt_tid_split <- p5 + p6 + plot_layout(ncol = 1)
+
+terskel_puls_watt_tid_split
 ```
 
 ```{r}
