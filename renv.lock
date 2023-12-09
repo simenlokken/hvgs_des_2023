@@ -1247,20 +1247,6 @@
       ],
       "Hash": "fec95dbb107a69b292532cbfdf8a211f"
     },
-    "gridExtra": {
-      "Package": "gridExtra",
-      "Version": "2.3",
-      "Source": "Repository",
-      "Repository": "RSPM",
-      "Requirements": [
-        "grDevices",
-        "graphics",
-        "grid",
-        "gtable",
-        "utils"
-      ],
-      "Hash": "7d7f283939f563670a697165b2cf5560"
-    },
     "gridtext": {
       "Package": "gridtext",
       "Version": "0.1.5",
