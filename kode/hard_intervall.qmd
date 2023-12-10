@@ -222,3 +222,35 @@ ggsave(p5_p6, filename = "hard_int_puls_fiolin_kombinert.jpg",
        height = 5,
        width = 8)
 ```
+
+```{r}
+
+library(ggridges)
+
+hard_intervall %>%
+  filter(interval != 0) %>%
+  ggplot(aes(x = heartrate, y = interval)) +
+  geom_density_ridges(fill = "dodgerblue", color = "black",
+                      scale = 4) +
+  scale_x_continuous(
+    name = "Puls (slag/min)",
+    breaks = seq(120, 180, 10)
+  ) +
+  scale_y_discrete(name = "Intervall") +
+  theme_minimal() +
+  theme(
+    panel.grid.minor.x = element_blank(),
+    plot.title = element_text(size = 10),
+    plot.subtitle = element_markdown(size = 8),
+    axis.title.x = element_text(size = 8),
+    axis.title.y = element_text(size = 8)
+  )
+
+setwd("C:/Users/simen/Desktop/hvgs_des_2023/grafer")
+
+ggsave(dpi = 300, width = 8, 
+       height = 5, 
+       filename = "hard_puls_ridgeline.jpg")
+
+       
+```
